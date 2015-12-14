@@ -1,0 +1,78 @@
+package huxleymusclemodel;
+
+import com.maxeler.maxcompiler.v2.kernelcompiler.Kernel;
+import com.maxeler.maxcompiler.v2.managers.BuildConfig;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.CPUTypes;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.EngineInterface;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.InterfaceParam;
+import com.maxeler.maxcompiler.v2.managers.standard.Manager;
+import com.maxeler.maxcompiler.v2.managers.standard.Manager.IOType;
+
+public class HuxleyMuscleModelManager {
+
+	private static final String s_kernelName = "HuxleyMuscleModelKernel";
+
+	public static void main(String[] args) {
+		HuxleyMuscleModelEngineParameters params = new HuxleyMuscleModelEngineParameters(
+				args);
+		Manager manager = new Manager(params);
+		Kernel kernel = new HuxleyMuscleModelKernel(
+				manager.makeKernelParameters(s_kernelName));
+		manager.setKernel(kernel);
+		/*
+		 * manager.setIO( link("X", IODestination.CPU), link("N",
+		 * IODestination.CPU), link("s", IODestination.CPU));
+		 */
+		manager.setIO(IOType.ALL_CPU);
+		manager.createSLiCinterface(interfaceDefault());
+
+		configBuild(manager, params);
+
+		manager.build();
+	}
+
+	private static EngineInterface interfaceDefault() {
+		EngineInterface engine_interface = new EngineInterface();
+		CPUTypes type = CPUTypes.FLOAT;
+		int typeSize = type.sizeInBytes();
+
+		InterfaceParam size = engine_interface.addParam("size", CPUTypes.INT32);
+		InterfaceParam dt = engine_interface.addParam("dt", type);
+		InterfaceParam f1 = engine_interface.addParam("f1", type);
+		InterfaceParam v = engine_interface.addParam("v", type);
+		InterfaceParam g1 = engine_interface.addParam("g1", type);
+		InterfaceParam g2 = engine_interface.addParam("g2", type);
+		InterfaceParam h = engine_interface.addParam("h", type);
+
+		engine_interface.setTicks(s_kernelName, size);
+
+		engine_interface.setScalar(s_kernelName, "dt", dt);
+		engine_interface.setScalar(s_kernelName, "f1", f1);
+		engine_interface.setScalar(s_kernelName, "v", v);
+		engine_interface.setScalar(s_kernelName, "g1", g1);
+		engine_interface.setScalar(s_kernelName, "g2", g2);
+		engine_interface.setScalar(s_kernelName, "h", h);
+
+		engine_interface.setStream("X", type, size * typeSize);
+		engine_interface.setStream("N", type, size * typeSize);
+		engine_interface.setStream("outputX", type, size * typeSize);
+		engine_interface.setStream("outputN", type, size * typeSize);
+		engine_interface.setStream("outputF", type, size * typeSize);
+		engine_interface.setStream("outputV", type, size * typeSize);
+		engine_interface.setStream("outputVcon", type, size * typeSize);
+		engine_interface.setStream("outputFcon", type, size * typeSize);
+
+		return engine_interface;
+	}
+
+	private static void configBuild(Manager manager,
+			HuxleyMuscleModelEngineParameters params) {
+		manager.setEnableStreamStatusBlocks(false);
+		BuildConfig buildConfig = manager.getBuildConfig();
+		buildConfig.setMPPRCostTableSearchRange(params.getMPPRStartCT(),
+				params.getMPPREndCT());
+		buildConfig.setMPPRParallelism(params.getMPPRThreads());
+		buildConfig.setMPPRRetryNearMissesThreshold(params
+				.getMPPRRetryThreshold());
+	}
+}

@@ -1,0 +1,86 @@
+package huxleymusclemodel;
+
+import com.maxeler.maxcompiler.v2.kernelcompiler.Kernel;
+import com.maxeler.maxcompiler.v2.kernelcompiler.KernelParameters;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEType;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEVar;
+
+class HuxleyMuscleModelKernel extends Kernel {
+
+	private static final DFEType scalarType = dfeFloat(8, 24);
+
+	protected HuxleyMuscleModelKernel(KernelParameters parameters) {
+		super(parameters);
+
+		// scalar inputs
+
+		DFEVar dt = io.scalarInput("dt", scalarType);
+		DFEVar V = io.scalarInput("v", scalarType);
+		DFEVar f1 = io.scalarInput("f1", scalarType);
+		DFEVar g1 = io.scalarInput("g1", scalarType);
+		DFEVar g2 = io.scalarInput("g2", scalarType);
+		DFEVar h = io.scalarInput("h", scalarType);
+
+		// Inputs
+		DFEVar X = io.input("X", scalarType);
+		DFEVar N = io.input("N", scalarType);
+
+		DFEVar fx_temp = ((0 <= X) & (X <= h)) ? f1 * X / h : 0.0;
+		DFEVar gx_temp = (0 <= X) ? g1 * X / h : g2;
+		DFEVar F = fx_temp * (1.0 - N) - gx_temp * N;
+
+		DFEVar X_curr = X + V * dt;
+		DFEVar N_curr = N + F * dt;
+		DFEVar V_curr = V;
+		DFEVar F_curr = F;
+
+		DFEVar X_next;// = constant.var(scalarType, 0);
+		DFEVar N_next; //= constant.var(scalarType, 0);
+		DFEVar V_next;// = constant.var(scalarType, 0);
+		DFEVar F_next; //= constant.var(scalarType, 0);
+
+		DFEVar V_con = constant.var(scalarType, 0);
+		DFEVar F_con = constant.var(scalarType, 0);
+
+		DFEVar fx;
+		DFEVar gx;
+
+		for (int i = 0; i < 10; i++) {
+
+			X_next = X + 0.5 * (V_curr + V) * dt;
+			V_next = (X_next - X) / dt;
+
+			// fun_F function calculation
+			fx = ((0 <= X_next) & (X_next <= h)) ? f1 * X_next / h : 0.0;
+			gx = (0 <= X_next) ? g1 * X_next / h : g2;
+			F_next = fx * (1.0 - N_curr) - gx * N_curr;
+
+			N_next = N + 0.5 * (F_next + F) * dt;
+
+			V_con = V_next - V_curr;
+			F_con = (F_next.cast(dfeInt(32)) === F_curr.cast(dfeInt(32))) ? 0.0 : F_next - F_curr ;
+
+
+			X_curr = X_next;
+			V_curr = V_next;
+			F_curr = F_next;
+			N_curr = N_next;
+
+		}
+
+
+		DFEVar X_out = X_curr;
+		DFEVar N_out = N_curr;
+		DFEVar F_out = F_curr;
+		DFEVar V_out = V_curr;
+
+		io.output("outputX", X_out, scalarType);
+		io.output("outputN", N_out, scalarType);
+		io.output("outputF", F_out, scalarType);
+		io.output("outputV", V_out, scalarType);
+		io.output("outputVcon", V_con, scalarType);
+		io.output("outputFcon", F_con, scalarType);
+
+	}
+
+}

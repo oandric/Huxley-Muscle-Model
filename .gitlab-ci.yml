@@ -1,0 +1,52 @@
+#
+# Huxley-Muscle-Model
+#
+# Required variables:
+#  - MAXCOMPILER_SIM_IMAGE: image with MaxCompiler and MaxCompiler Simulator
+#  - MAXCOMPILER_DFE_IMAGE: image with MaxCompiler and Quartus II
+#
+
+stages:
+- make-sim
+- make-dfe
+
+make-sim-Huxley-Muscle-Model:
+  image: $MAXCOMPILER_SIM_IMAGE
+  script:
+  - make -C APP/CPUCode RUNRULE='Simulation'
+  - make -C APP/CPUCode RUNRULE='Simulation' runsim
+  stage: make-sim
+  tags:
+  - maxcompiler-sim
+
+make-Galava-Huxley-Muscle-Model:
+  image: $MAXCOMPILER_DFE_IMAGE
+  script:
+  - make -C APP/CPUCode RUNRULE='Galava'
+  stage: make-dfe
+  tags:
+  - maxcompiler-dfe
+
+make-Maia-Huxley-Muscle-Model:
+  image: $MAXCOMPILER_DFE_IMAGE
+  script:
+  - make -C APP/CPUCode RUNRULE='Maia'
+  stage: make-dfe
+  tags:
+  - maxcompiler-dfe
+
+make-Isca-Huxley-Muscle-Model:
+  image: $MAXCOMPILER_DFE_IMAGE
+  script:
+  - make -C APP/CPUCode RUNRULE='Isca'
+  stage: make-dfe
+  tags:
+  - maxcompiler-dfe
+
+make-Coria-Huxley-Muscle-Model:
+  image: $MAXCOMPILER_DFE_IMAGE
+  script:
+  - make -C APP/CPUCode RUNRULE='Coria'
+  stage: make-dfe
+  tags:
+  - maxcompiler-dfe

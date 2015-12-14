@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maxCompilerManager version="2">
+<enginePart internalEngineSubproject="HuxleyMuscleModel_EngineCode" isSrcBin="false" isUseDefaultSelected="false" outputLocation="/HuxleyMuscleModel_EngineCode/bin" projectName="HuxleyMuscleModel"/>
+<cpuPart internalCpuSubproject="HuxleyMuscleModel_CPUCode"/>
+<watchedFiles/>
+</maxCompilerManager>
