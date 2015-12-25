@@ -4,6 +4,7 @@ HuxleyMuscleModel
 
 Huxley Muscle Model implementation on DFE.
 
+<img src="http://appgallery.maxeler.com/v0.1/app/Huxley%20Muscle%20Model/icon" alt="Jacobi Solver">
 
 Description
 ------------
