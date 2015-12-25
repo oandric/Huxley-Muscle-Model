@@ -62,7 +62,7 @@ include/HuxleyMuscleModel.h: maxfiles/HuxleyMuscleModel.h
 maxfiles/HuxleyMuscleModel.max maxfiles/HuxleyMuscleModel.h:
 # Ensure that maxfiles do not get build by this Makefile when running in MaxIDE
 ifndef MAXIDE_RUN
-	test -f $@ || env  MAX_BUILDPARAMS=" DFEModel=GALAVA  target=DFE  maxFileName=HuxleyMuscleModel MPPRThreads='1' MPPRStartCT='1' MPPREndCT='18' "  ant -v -f HuxleyMuscleModel.xml
+	test -f $@ || env  MAX_BUILDPARAMS=" DFEModel=ISCA  target=DFE  maxFileName=HuxleyMuscleModel MPPRThreads='1' MPPRStartCT='1' MPPREndCT='8' "  ant -v -f HuxleyMuscleModel.xml
 else
 	test -f $@ || ( echo 'Maxfile unavailable: $@' >/dev/stderr ; exit 1 )
 endif
