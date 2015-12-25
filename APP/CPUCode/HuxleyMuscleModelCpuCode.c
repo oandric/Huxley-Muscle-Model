@@ -15,7 +15,7 @@ int main(void) {
 	float f1 = 43.3, g1 = 10.0, g2 = 209.0, h = 15.6, v = 107.4; //, fx, gx;
 	float sumX = 0, sumN = 0, sumFcon = 0, sumVcon = 0, sumV = 0, sumF = 0;
 	int i;
-	int size = 8000000;
+	int size = 80000;
 
 	struct timeval start, end;
 	long mtime, seconds, useconds;
