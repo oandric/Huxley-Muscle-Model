@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <buildProfile>
 <common>
-<boardModel type="GALAVA"/>
+<boardModel type="CORIA"/>
 <simulation enabled="false"/>
 <enableMPCX enabled="false"/>
 <programArgument argument="MPPRThreads" value="1"/>
